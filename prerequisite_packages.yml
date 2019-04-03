@@ -1,0 +1,28 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install Packages
+    yum: 
+     name: "{{ item }}"
+     state: present
+    with_items: 
+     - gcc
+     - autoconf
+     - automake
+     - hwloc-devel
+     - libX11-devel
+     - libXt-devel
+     - libedit-devel
+     - libical-devel
+     - ncurses-devel
+     - perl
+     - postgresql-devel
+     - python-devel >= 2.6
+     - python-devel < 3.0
+     - tcl-devel
+     - tk-devel
+     - swig
+     - expat-devel 
+     - openssl-devel
+     - git

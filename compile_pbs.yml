@@ -1,0 +1,27 @@
+---
+- name: Compile PBS source code
+  hosts: all
+  become: yes
+  tasks:
+  - name: Running autogen.sh
+    command: ./autogen.sh
+    args:
+      chdir: /pbs
+  - name: Running configure
+    command: ./configure
+    args:
+      chdir: /pbs
+  - name: Running make
+    command: make dist
+    args:
+      chdir: /pbs
+
+- name: Copy created tar.gz file into rpmbuild/SOURCES
+  hosts: all
+  become: yes
+  tasks:
+  - name: Copying file
+    copy:
+     src: /pbs/pbspro-19.0.0.tar.gz
+     dest: /home/ajay/rpmbuild/SOURCES
+     remote_src: yes
