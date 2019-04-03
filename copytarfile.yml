@@ -15,3 +15,8 @@
       remote_src: yes
     with_items: 
       - "{{ file_to_copy.files }}"
+
+  - copy:
+      src: /pbs/pbspro.spec
+      dest: /home/ajay/rpmbuild/SPECS
+      remote_src: yes

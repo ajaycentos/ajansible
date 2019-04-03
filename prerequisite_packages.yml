@@ -26,3 +26,4 @@
      - expat-devel 
      - openssl-devel
      - git
+     - postgresql-contrib
