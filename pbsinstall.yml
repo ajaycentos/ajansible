@@ -1,0 +1,21 @@
+---
+- name: Install PBS
+  hosts: all
+  become: yes
+  tasks:
+  - name: Installing PBS Server rpm
+    find: paths="/home/ajay/rpmbuild/RPMS/x86_64/" patterns="pbspro-server*.rpm"
+    register: toinstall_server
+  - debug:
+     var: toinstall_server.files[0].path
+  - yum: 
+     name: "{{ toinstall_server.files[0].path }}"
+     state: present
+  - lineinfile:
+      path: /etc/pbs.conf
+      regexp: '^PBS_START_MOM='
+      line: "PBS_START_MOM=1"
+  - service:
+      name: pbs
+      state: started
+      enabled: yes   
