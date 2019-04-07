@@ -1,0 +1,56 @@
+---
+- name: Docker setup
+  hosts: all
+  become: yes
+  tasks:
+  - name: Uninstall all docker
+    yum:
+      name: "{{ item }}"
+      state: absent
+    with_items:
+      - docker
+      - docker-client
+      - docker-client-latest
+      - docker-common
+      - docker-latest
+      - docker-latest-logrotate
+      - docker-logrotate
+      - docker-engine
+  - name: Install yum-utils etc
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+  - name: Add docker repository
+    get_url:
+      url: https://download.docker.com/linux/centos/docker-ce.repo
+      dest: /etc/yum.repos.d/docer-ce.repo
+  
+  - name: Install Docker
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+
+  - name: Create docker group
+    group: 
+      name: docker
+      state: present
+
+  - name: Add ajay user to group
+    user: 
+      name: ajay
+      groups: docker
+      append: yes
+
+  - name: Start and enable docker
+    service:
+      name: docker
+      state: started
+      enabled: yes
