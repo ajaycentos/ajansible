@@ -1,6 +1,6 @@
 ---
 - name: Create normal user with sudo
-  hosts: server1
+  hosts: "{{nodes}}"
   tasks: 
   - name: Make sure we have a 'wheel' group
     group:

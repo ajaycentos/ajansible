@@ -1,6 +1,6 @@
 ---
 - name: Install basic packages
-  hosts: all
+  hosts: "{{nodes}}"
   become: yes
   tasks:
   - name: Installing
