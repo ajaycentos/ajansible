@@ -1,1 +1,16 @@
-pbs1
+mgr1
+mgr2
+mgr3
+wrk1
+wrk2
+wrk3
+
+[master]
+mgr1
+mgr2
+mgr3
+
+[worker]
+wrk1
+wrk2
+wrk3
