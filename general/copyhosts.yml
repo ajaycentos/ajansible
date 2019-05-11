@@ -1,0 +1,9 @@
+---
+- name: To copy hots
+  hosts: '{{nodes}}'
+  become: yes
+  tasks:
+     
+  - copy:
+      src: /etc/hosts
+      dest: /etc/hosts
