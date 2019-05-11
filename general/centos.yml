@@ -1,0 +1,19 @@
+---
+- hosts: "{{nodes}}"
+  become: yes
+  tasks:
+  - name: remove local.repo file
+    file:
+      dest: /etc/yum.repos.d/localyum.repo
+      state: absent
+  - name: Finding centos repo
+    find: paths="/etc/yum.repos.d/orig" patterns="CentOS*"
+    register: file_to_copy 
+  - name: Copy Centos repo  
+    copy:
+      src: "{{ item.path }}"
+      dest: /etc/yum.repos.d/
+      remote_src: yes
+    with_items:
+      - "{{ file_to_copy.files }}"
+

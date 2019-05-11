@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Clone PBS using git
+    git:
+      repo: https://github.com/PBSPro/pbspro
+      dest: /pbs

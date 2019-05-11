@@ -1,0 +1,8 @@
+---
+- name: Run rpmbuild to create packages
+  hosts: all
+  tasks:
+  - name: rpmbuild
+    command: rpmbuild -ba pbspro.spec
+    args:
+      chdir: /home/ajay/rpmbuild/SPECS
