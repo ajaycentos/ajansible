@@ -1,0 +1,28 @@
+version: '3'
+services:
+  PS:
+    privileged: true
+    image: ibmcom/spectrum-symphony
+    volumes:
+      - /data1/cluster2:/shared
+    networks:
+      - symnet
+    environment:
+      - LICENSE=accept
+    ports:
+      - "8443"
+      - "8543"
+      - "8050"
+  WRK:
+    privileged: true
+    image: ibmcom/spectrum-symphony
+    volumes:
+      - /data1/cluster2:/shared
+    networks:
+      - symnet
+    environment:
+      - LICENSE=accept
+      - HOST_ROLE=COMPUTE
+
+networks:
+  symnet:

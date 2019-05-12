@@ -1,0 +1,14 @@
+version: '3'
+services:
+  WRK:
+    privileged: true
+    image: ibmcom/spectrum-symphony
+    volumes:
+      - /data/cluster1:/shared
+    networks:
+      - symnet
+    environment:
+      - LICENSE=accept
+      - HOST_ROLE=COMPUTE
+networks:
+  symnet:
