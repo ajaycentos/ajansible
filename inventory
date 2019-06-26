@@ -14,3 +14,7 @@ mgr3
 wrk1
 wrk2
 wrk3
+
+[kube]
+node01
+node02
