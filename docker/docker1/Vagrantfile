@@ -1,0 +1,22 @@
+# vi: set ft=ruby :
+
+ENV['VAGRANT_NO_PARALLEL'] = 'yes'
+
+Vagrant.configure(2) do |config|
+
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+  config.vm.synced_folder "c:/vms/data", "/data"
+
+  #config.vm.provision "shell", path: "bootstrap.sh"
+
+  config.vm.define "node01" do |node01|
+    node01.vm.box = "ajaycentos/centos7"
+    node01.vm.hostname = "ansible.ajay.com"
+    node01.vm.network "private_network", ip: "172.45.45.100"
+    node01.vm.provider "virtualbox" do |vb|
+      vb.name = "node01"
+      vb.memory = 512
+      vb.cpus = 1
+    end
+  end
+   end

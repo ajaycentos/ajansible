@@ -1,0 +1,5 @@
+ansible
+node02
+
+[docker1]
+node02

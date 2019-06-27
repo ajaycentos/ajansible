@@ -1,0 +1,59 @@
+---
+- name: Docker setup
+  hosts: docker1
+  become: yes
+  tasks:
+  - name: copy hosts file
+    copy:
+      src: /data/git/ajansible/files/hosts
+      dest: /etc/hosts
+
+  - name: Uninstall all docker
+    yum:
+      name: "{{ packages }}"
+      state: absent
+    vars:
+      packages:
+        - docker
+        - docker-client
+        - docker-client-latest
+        - docker-common
+        - docker-latest
+        - docker-latest-logrotate
+        - docker-logrotate
+        - docker-engine
+
+  - name: Add docker repository
+    get_url:
+      url: https://download.docker.com/linux/centos/docker-ce.repo
+      dest: /etc/yum.repos.d/docer-ce.repo
+
+  - name: Install yum-utils etc and Docker
+    yum:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+
+  - name: Create docker group
+    group:
+      name: docker
+      state: present
+
+  - name: Add vagrant user to group
+    user:
+      name: vagrant
+      groups: docker
+      append: yes
+
+  - name: Start and enable docker
+    service:
+      name: docker
+      state: started
+      enabled: yes
