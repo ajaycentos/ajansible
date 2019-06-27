@@ -1,0 +1,90 @@
+---
+- name: Install Kubernets
+  hosts: kube
+  become: yes
+
+  tasks:
+
+    - name: Update system
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Copy hosts file
+      copy:
+        src: /data/files/hosts
+        dest: /etc/hosts
+
+    - name: Set up authorized keys for the deployed user
+      authorized_key:
+        user: vagrant
+        key: "{{item}}"
+      with_file:
+        - /home/vagrant/.ssh/id_rsa.pub
+
+    - name: Copy private keys for the deployed user
+      copy:
+        src: /home/vagrant/.ssh/id_rsa
+        dest: /home/vagrant/.ssh/id_rsa
+
+
+
+    - name: swap - remove current swaps from fstab
+      lineinfile:
+        dest: /etc/fstab
+        regexp: '^/[\S]+\s+none\s+swap '
+        state: absent
+
+
+    - name: swap - disable swap
+      command: swapoff --all
+
+    - name: Update sysctl settings for Kubernetes networking
+      copy:
+        dest: "/etc/sysctl.d/kubernetes.conf"
+        content: |
+          net.bridge.bridge-nf-call-ip6tables = 1
+          net.bridge.bridge-nf-call-iptables = 1
+    - name: Appy sysctl settings
+      command: sysctl --system
+
+    - name: Add Kubernetes repo
+      copy:
+        dest: /etc/yum.repos.d/kubernetes.repo
+        content: |
+          [kubernetes]
+          name=Kubernetes
+          baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+          enabled=1
+          gpgcheck=0
+          repo_gpgcheck=0
+          gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+          https://packages.cloud.google.com/yum/doc/rpm-packagekey.gpg
+
+    - name: Create Docker repository
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docer-ce.repo
+
+    - name: Install yum-utils etc
+      yum:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+          - docker-ce
+          - kubeadm
+          - kubelet
+          - kubectl
+
+    - name: Enable and start docker
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      with_items:
+          - docker
+          - kubelet
