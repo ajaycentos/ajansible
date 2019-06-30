@@ -1,12 +1,14 @@
 ---
 - name: Docker setup
-  hosts: docker1
+  hosts: ajdocker1
   become: yes
+  remote_user: ajay
   tasks:
-  - name: copy hosts file
-    copy:
-      src: /data/git/ajansible/files/hosts
-      dest: /etc/hosts
+
+  #- name: Update the system
+  #  yum:
+  #    name: '*'
+  #    state: latest
 
   - name: Uninstall all docker
     yum:
@@ -27,6 +29,7 @@
     get_url:
       url: https://download.docker.com/linux/centos/docker-ce.repo
       dest: /etc/yum.repos.d/docer-ce.repo
+
 
   - name: Install yum-utils etc and Docker
     yum:
