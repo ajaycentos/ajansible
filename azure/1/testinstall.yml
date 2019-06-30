@@ -1,0 +1,21 @@
+---
+- name: test install yum
+  hosts: ajtest1
+  remote_user: ajay
+  become: yes
+  tasks:
+  - name: Install unzip
+    yum:
+      name: unzip
+      state: present
+
+- name: test install yum
+  hosts: type_nodes
+  remote_user: ajay
+  become: yes
+  tasks:
+  - name: Install vim
+
+    yum:
+      name: unzip
+      state: present

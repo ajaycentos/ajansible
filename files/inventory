@@ -1,5 +1,5 @@
 ansible
-node02
+52.191.195.13
 
 [docker1]
-node02
+52.191.195.13 user=ajay
