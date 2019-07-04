@@ -1,6 +1,6 @@
 ---
 - name: Install Kubernets
-  hosts: kube
+  hosts: type_master
   become: yes
   remote_user: ajay
   tasks:
@@ -10,25 +10,13 @@
 #        name: "*"
 #        state: latest
 
-    - name: Copy hosts file
-      copy:
-        src: /data/files/hosts
-        dest: /etc/hosts
+setenforce 0
+sed -i --follow-symlinks 's/^SELINUX=enforcing/SELINUX=disabled/'
+/etc/sysconfig/selinux
 
-    - name: Set up authorized keys for the deployed user
-      authorized_key:
-        user: vagrant
-        key: "{{item}}"
-      with_file:
-        - /home/vagrant/.ssh/id_rsa.pub
-
-    - name: Copy private keys for the deployed user
-      copy:
-        src: /home/vagrant/.ssh/id_rsa
-        dest: /home/vagrant/.ssh/id_rsa
-
-
-
+    - name: Disable selinux
+      selinux:
+        state: disabled
     - name: swap - remove current swaps from fstab
       lineinfile:
         dest: /etc/fstab
