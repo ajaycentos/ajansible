@@ -10,13 +10,13 @@
 #        name: "*"
 #        state: latest
 
-setenforce 0
-sed -i --follow-symlinks 's/^SELINUX=enforcing/SELINUX=disabled/'
-/etc/sysconfig/selinux
+
 
     - name: Disable selinux
       selinux:
         state: disabled
+      notify: reboot server
+
     - name: swap - remove current swaps from fstab
       lineinfile:
         dest: /etc/fstab
@@ -76,3 +76,34 @@ sed -i --follow-symlinks 's/^SELINUX=enforcing/SELINUX=disabled/'
       with_items:
           - docker
           - kubelet
+  handlers:
+      - name: reboot servers
+        reboot:
+
+- name: Initialize Kubernetes Cluster
+  hosts: ajvm001
+  remote_user: ajay
+  tasks:
+    - name: Init
+      become: yes
+      command: "kubeadm init --apiserver-advertise-address=192.168.1.4 --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU"
+      register: output
+    - debug:
+        var: output.stdout_lines
+
+    - name: Ensure config exists
+      file:
+        path: /home/ajay/.kube
+        state: directory
+
+    - name: Copy kube config
+      become: yes
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ajay/.kube/config
+        owner: ajay
+        group: ajay
+        remote_src: yes
+
+    - name: Deploy flannel network
+      command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml

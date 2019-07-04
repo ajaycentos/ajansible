@@ -39,7 +39,10 @@
         name: ajnic1
         virtual_network: ajvn001
         subnet: ajsubnet001
+        private_ip_allocation_method: static
+        private_ip_address: 192.168.1.10
         public_ip_name: ajpubip001
+
 
     - name: Create NIC
       azure_rm_networkinterface:
@@ -47,7 +50,10 @@
         name: ajnic2
         virtual_network: ajvn001
         subnet: ajsubnet001
+        private_ip_allocation_method: static
+        private_ip_address: 192.168.1.11
         public_ip_name: ajpubip002
+
 
 
 
@@ -57,7 +63,7 @@
       azure_rm_virtualmachine:
         resource_group: ajkube1
         name: ajvm001
-        vm_size: Standard_DS1_v2
+        vm_size: Standard_B2s
         ssh_password_enabled: no
         admin_username: ajay
         ssh_public_keys:
@@ -77,7 +83,7 @@
       azure_rm_virtualmachine:
         resource_group: ajkube1
         name: ajvm002
-        vm_size: Standard_DS1_v2
+        vm_size: Standard_B2s2
         ssh_password_enabled: no
         admin_username: ajay
         ssh_public_keys:

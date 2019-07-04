@@ -5,6 +5,6 @@
   tasks:
     - name: Delete a resource group including resources it contains
       azure_rm_resourcegroup:
-        name: ajdocker1
+        name: ajkube1
         force_delete_nonempty: yes
         state: absent

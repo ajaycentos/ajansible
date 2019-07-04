@@ -49,9 +49,9 @@
       name: docker
       state: present
 
-  - name: Add vagrant user to group
+  - name: Add user to docker group
     user:
-      name: vagrant
+      name: ajay
       groups: docker
       append: yes
 
