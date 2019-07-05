@@ -77,7 +77,7 @@
           - docker
           - kubelet
   handlers:
-      - name: reboot servers
+      - name: reboot server
         reboot:
 
 - name: Initialize Kubernetes Cluster
@@ -86,7 +86,7 @@
   tasks:
     - name: Init
       become: yes
-      command: "kubeadm init --apiserver-advertise-address=192.168.1.4 --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=NumCPU"
+      command: "kubeadm init --apiserver-advertise-address=192.168.1.10 --pod-network-cidr=10.244.0.0/16"
       register: output
     - debug:
         var: output.stdout_lines
