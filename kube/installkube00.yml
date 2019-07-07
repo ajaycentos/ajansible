@@ -84,17 +84,23 @@
   hosts: ajvm001
   remote_user: ajay
   tasks:
+    - name: Check if kubeadm already Initialized
+      shell: ps -ef|grep kube-apiserver |grep -v grep
+      register: kubeapi_process
+      ignore_errors: true
+      changed_when: false
+
     - name: Init
       become: yes
       command: "kubeadm init --apiserver-advertise-address=192.168.1.10 --pod-network-cidr=10.244.0.0/16"
-      register: output
-    - debug:
-        var: output.stdout_lines
+      when: "kubeapi_process.stdout.find('kube-apiserver') == -1"
+
 
     - name: Ensure config exists
       file:
         path: /home/ajay/.kube
         state: directory
+
 
     - name: Copy kube config
       become: yes
@@ -104,6 +110,8 @@
         owner: ajay
         group: ajay
         remote_src: yes
+      when: "kubeapi_process.stdout.find('kube-apiserver') == -1"
 
     - name: Deploy flannel network
       command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+      when: "kubeapi_process.stdout.find('kube-apiserver') == -1"
