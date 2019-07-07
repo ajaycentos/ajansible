@@ -5,13 +5,6 @@
   remote_user: ajay
   tasks:
 
-#    - name: Update system
-#      yum:
-#        name: "*"
-#        state: latest
-
-
-
     - name: Disable selinux
       selinux:
         state: disabled
@@ -83,12 +76,15 @@
 - name: Initialize Kubernetes Cluster
   hosts: ajvm001
   remote_user: ajay
+  tags:
+   - check_init
   tasks:
     - name: Check if kubeadm already Initialized
       shell: ps -ef|grep kube-apiserver |grep -v grep
       register: kubeapi_process
       ignore_errors: true
       changed_when: false
+
 
     - name: Init
       become: yes
@@ -115,3 +111,33 @@
     - name: Deploy flannel network
       command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
       when: "kubeapi_process.stdout.find('kube-apiserver') == -1"
+
+
+    - name: Get token command
+      become: yes
+      command: kubeadm token create --print-join-command
+      register: kube_token
+      vars:
+        - token: kube_token.stdout_lines
+    - debug:
+       var: kube_token.stdout_lines[0]
+    - local_action: "copy content='{{ kube_token.stdout_lines[0]}}' dest=/tmp/kube_token.sh"
+
+
+- name: Add token
+  hosts: type_master:!ajvm001
+  remote_user: ajay
+  tags:
+    - addtoken
+  tasks:
+
+   - name: Check if kubelet process already Initialized
+     shell: ps -ef|grep kubelet |grep -v grep
+     register: kubelet_process
+     ignore_errors: true
+     changed_when: false
+
+   - name: Run script to add node to master
+     become: yes
+     script: /tmp/kube_token.sh
+     when: "kubelet_process.stdout.find('kubelet') == -1"
