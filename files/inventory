@@ -3,3 +3,6 @@ ansible
 
 [docker1]
 52.191.195.13 user=ajay
+
+[apache]
+node05
