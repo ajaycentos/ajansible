@@ -1,8 +1,10 @@
 ---
+## Run with ansible-playbook -i 192.168.56.132, installdocker_v1.yml
+## Note if user needs to ve changed
 - name: Docker setup
-  hosts: ajdocker1
+  hosts: all
   become: yes
-  remote_user: ajay
+  remote_user: vagrant
   tasks:
 
   #- name: Update the system
@@ -51,7 +53,7 @@
 
   - name: Add user to docker group
     user:
-      name: ajay
+      name: vagrant
       groups: docker
       append: yes
 
